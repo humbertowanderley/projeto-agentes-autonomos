@@ -116,12 +116,12 @@ Deve solicitar a colocação de um número pré definido de pylons de proxy pró
 É responsável pela criação da memória compartilhada e por instanciar todos os outros agentes. 
 
 ### Hierarquia dos Agentes
-Estrategista pode dar ordens ao Explorador
-Estrategista pode dar ordens ao Militar de ataque
-Coletor de recursos é independente
-Construtor é independente
-Militar de Defesa pode dar ordens ao Estrategista
-Agente principal instancia todos os outros agentes.
+Estrategista pode dar ordens ao Explorador   
+Estrategista pode dar ordens ao Militar de ataque   
+Coletor de recursos é independente   
+Construtor é independente   
+Militar de Defesa pode dar ordens ao Estrategista   
+Agente principal instancia todos os outros agentes.   
 
 ## Relatório
 O Relatório do projeto deve ser elaborado a medida que os agentes forem ficando prontos e documentados no github. A documentação deve ser feita a medida que os micro objetivos dos agentes estejam sendo concluídos.
