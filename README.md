@@ -37,17 +37,17 @@ A estratégia principal consiste em localizar a base inimiga o mais rápido poss
 
 - **Ordem de construções:**
 
-	 1. ![Pylon](https://liquipedia.net/commons/images/8/83/Techtree-building-protoss-pylon.png)
-	 2. ![Gateway](https://liquipedia.net/commons/images/b/b6/Techtree-building-protoss-gateway.png)
-	 3. ![Cybernetics Core](https://liquipedia.net/commons/images/9/9f/Techtree-building-protoss-cyberneticscore.png)
-	 4. ![Twilight Council](https://liquipedia.net/commons/images/0/03/Techtree-building-protoss-twilightcouncil.png)
-	 5. ![Dark Shrine](https://liquipedia.net/commons/images/6/64/Techtree-building-protoss-darkshrine.png)
+	 1. Pylon:  ![Pylon](https://liquipedia.net/commons/images/8/83/Techtree-building-protoss-pylon.png)
+	 2. Gateway:  ![Gateway](https://liquipedia.net/commons/images/b/b6/Techtree-building-protoss-gateway.png)
+	 3. Cybernetics Core:  ![Cybernetics Core](https://liquipedia.net/commons/images/9/9f/Techtree-building-protoss-cyberneticscore.png)
+	 4. Twilight Council:  ![Twilight Council](https://liquipedia.net/commons/images/0/03/Techtree-building-protoss-twilightcouncil.png)
+	 5. Dark Shrine:  ![Dark Shrine](https://liquipedia.net/commons/images/6/64/Techtree-building-protoss-darkshrine.png)
 
 - **Unidades**
-![Probe](https://liquipedia.net/commons/images/thumb/c/c9/Techtree-unit-protoss-probe.png/25px-Techtree-unit-protoss-probe.png) ![Stalker](https://liquipedia.net/commons/images/thumb/c/cb/Techtree-unit-protoss-stalker.png/25px-Techtree-unit-protoss-stalker.png) ![Dark Templar](https://liquipedia.net/commons/images/thumb/c/c0/Techtree-unit-protoss-darktemplar.png/25px-Techtree-unit-protoss-darktemplar.png)
+Probe: ![Probe](https://liquipedia.net/commons/images/thumb/c/c9/Techtree-unit-protoss-probe.png/25px-Techtree-unit-protoss-probe.png) Stalker: ![Stalker](https://liquipedia.net/commons/images/thumb/c/cb/Techtree-unit-protoss-stalker.png/25px-Techtree-unit-protoss-stalker.png) Dark Templar: ![Dark Templar](https://liquipedia.net/commons/images/thumb/c/c0/Techtree-unit-protoss-darktemplar.png/25px-Techtree-unit-protoss-darktemplar.png)
 
 - **Tecnologias**
-![Warp Gate](https://liquipedia.net/commons/images/thumb/d/d2/Techtree-building-protoss-warpgate.png/25px-Techtree-building-protoss-warpgate.png)
+Warp Gate: ![Warp Gate](https://liquipedia.net/commons/images/thumb/d/d2/Techtree-building-protoss-warpgate.png/25px-Techtree-building-protoss-warpgate.png)
 
 ## Agentes
 A estratégia será implementada através de uma abordagem multi agentes. Cada um dos agentes se comunicará com os demais através de memória compartilhada. Basicamente será uma lista acessível por qualquer um dos agentes. A lista descreve informações interessantes sobre o estado atual da estratégia, possibilitando a tomada de decisão do que deve e quando deve ser feito.
