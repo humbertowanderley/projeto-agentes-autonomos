@@ -53,19 +53,19 @@ Warp Gate: ![Warp Gate](https://liquipedia.net/commons/images/thumb/d/d2/Techtre
 A estratégia será implementada através de uma abordagem multi agentes. Cada um dos agentes se comunicará com os demais através de memória compartilhada. Basicamente será uma lista acessível por qualquer um dos agentes. A lista descreve informações interessantes sobre o estado atual da estratégia, possibilitando a tomada de decisão do que deve e quando deve ser feito.
 
  **Tabela de memória compartilhada**   
-|	Informação			|  Tipo			| Inicialização	|	Objetivo      
-|---------------------------------------|-----------------------|---------------|----------------|   
-|  Gateways Construídos			| Inteiro 		| 0		| 6   
-|  Cybernetics Core Construídos		| Inteiro 		| 0		| 1   
-|  Twilight Council Construídos 	| Inteiro 		| 0		| 1   
-|  Dark Shrine Council 			| Inteiro 		| 0		| 1   
-|Nexus Ativos 				| Inteiro 		| 1 		| 3   
-|Stalkers Pelotão de Ataque 		| Inteiro 		| 0 		| 30   
-|Dark Templars Pelotãao de Ataque 	| Inteiro 		| 0 		| 5   
-|Stalkers Pelotão de Defesa 		| Inteiro 		| 0 		| 15   
-|Dark Templars Pelotão de Defesa 	| Inteiro 		| 0 		| 2   
-|Pilows de proxy 			| lista com localização | 0 		| 5   
-
+  
+Informação 			| Tipo 		| Inicialização | Objetivo
+:-------: 			| :------: 	| :------: 	| :------:
+Gateways Construídos     	| Inteiro 	| 0		| 6
+Cybernetics Core Construídos    | Inteiro 	| 0		| 1
+Twilight Council Construídos    | Inteiro 	| 0		| 1
+Dark Shrine Councilo  		| Inteiro 	| 0 		| 1
+Nexus Ativos	  		| Inteiro 	| 1 		| 3
+Stalkers Pelotão de Ataque 	| Inteiro 	| 0 		| 30
+Dark Templars Pelotão de Ataque | Inteiro 	| 0 		| 5
+Stalkers Pelotão de Defesa 	| Inteiro 	| 0 		| 15 
+Dark Templars Pelotão de Defesa | Inteiro 	| 0 		| 2
+Pilows de proxy 		| lista 	| [ ] 		| [local1, ... local5]
 
 ### Agente de Exploração
 Encarregado de explorar o mapa com o objetivo de descobrir onde a base inimiga está o mais rápido possível.
@@ -146,7 +146,7 @@ O Relatório do projeto deve ser elaborado a medida que os agentes forem ficando
 
 - Qualquer parte da documentação inicial está sujeita a alteração.
 - A memória compartilhada pode ter mais ou menos informações, conforme vá havendo necessidade por parte dos agentes durante a implementação.
-- A pasta **agente-exemplo da estrategia** é apenas um esboço simples de um único agente do que deve ser a estratégia. Ele tem muitas limitações e alguns bugs, porém pode ajudar na implementação dos agentes e no entendimento da estratégia na prática.
+- A pasta **agente-exemplo da estrategia** é apenas um esboço simples de um único agente, baseado no que deve ser a estratégia. Ele tem muitas limitações e alguns bugs, porém pode ajudar na implementação dos agentes e no entendimento da estratégia na prática.
 - Cada agente deve ser criado em um arquivo separado dentro da pasta Agentes. Ao final será dado um import de todos os agentes no arquivo do agente principal para o instanciamento.
 
 **Deadline da implementação: 01/07/2018**
