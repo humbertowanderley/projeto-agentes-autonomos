@@ -127,12 +127,19 @@ Agente principal instancia todos os outros agentes.
 O Relatório do projeto deve ser elaborado a medida que os agentes forem ficando prontos e documentados no github. A documentação deve ser feita a medida que os micro objetivos dos agentes estejam sendo concluídos.
 
 ## Divisão do Projeto
+
 **Isaac:** Agente de Exploração
+
 **Bruno:** Agente Militar de Defesa
+
 **Diogo:** Agente Administrador de Recursos
-**Leonardo:** Agente Militar de Ataque
+
+**Leandro:** Agente Militar de Ataque
+
 **Well:** Agente de Construção
+
 **Humberto:** Agente principal e Agente Estrategista
+
 **Carol:** Relatório
 
 ## Considerações Finais
