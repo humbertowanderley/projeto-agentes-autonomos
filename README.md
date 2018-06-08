@@ -1,4 +1,4 @@
-# Projeto de Agentes Atônomos
+# Projeto de Agentes Autônomos
 
 Documentação do projeto da disciplina de agentes autônomos.
 **Equipe:**
