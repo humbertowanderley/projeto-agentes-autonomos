@@ -43,10 +43,10 @@ A estratégia principal consiste em localizar a base inimiga o mais rápido poss
 	 4. Twilight Council:  ![Twilight Council](https://liquipedia.net/commons/images/0/03/Techtree-building-protoss-twilightcouncil.png)
 	 5. Dark Shrine:  ![Dark Shrine](https://liquipedia.net/commons/images/6/64/Techtree-building-protoss-darkshrine.png)
 
-- **Unidades**
+- **Unidades**   
 Probe: ![Probe](https://liquipedia.net/commons/images/thumb/c/c9/Techtree-unit-protoss-probe.png/25px-Techtree-unit-protoss-probe.png) Stalker: ![Stalker](https://liquipedia.net/commons/images/thumb/c/cb/Techtree-unit-protoss-stalker.png/25px-Techtree-unit-protoss-stalker.png) Dark Templar: ![Dark Templar](https://liquipedia.net/commons/images/thumb/c/c0/Techtree-unit-protoss-darktemplar.png/25px-Techtree-unit-protoss-darktemplar.png)
 
-- **Tecnologias**
+- **Tecnologias**   
 Warp Gate: ![Warp Gate](https://liquipedia.net/commons/images/thumb/d/d2/Techtree-building-protoss-warpgate.png/25px-Techtree-building-protoss-warpgate.png)
 
 ## Agentes
