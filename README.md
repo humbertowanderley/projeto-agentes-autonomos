@@ -52,19 +52,19 @@ Warp Gate: ![Warp Gate](https://liquipedia.net/commons/images/thumb/d/d2/Techtre
 ## Agentes
 A estratégia será implementada através de uma abordagem multi agentes. Cada um dos agentes se comunicará com os demais através de memória compartilhada. Basicamente será uma lista acessível por qualquer um dos agentes. A lista descreve informações interessantes sobre o estado atual da estratégia, possibilitando a tomada de decisão do que deve e quando deve ser feito.
 
- **Tabela de memória compartilhada**
-|	Informação			|  Tipo			| Inicialização	|	Objetivo
-|---------------------------------------|-----------------------|---------------|----------------|
-|  Gateways Construídos			| Inteiro 		| 0		| 6
-|  Cybernetics Core Construídos		| Inteiro 		| 0		| 1
-|  Twilight Council Construídos 	| Inteiro 		| 0		| 1
-|  Dark Shrine Council 			| Inteiro 		| 0		| 1
-|Nexus Ativos 				| Inteiro 		| 1 		| 3
-|Stalkers Pelotão de Ataque 		| Inteiro 		| 0 		| 30
-|Dark Templars Pelotãao de Ataque 	| Inteiro 		| 0 		| 5
-|Stalkers Pelotão de Defesa 		| Inteiro 		| 0 		| 15
-|Dark Templars Pelotão de Defesa 	| Inteiro 		| 0 		| 2
-|Pilows de proxy 			| lista com localização | 0 		| 5
+ **Tabela de memória compartilhada**   
+|	Informação			|  Tipo			| Inicialização	|	Objetivo      
+|---------------------------------------|-----------------------|---------------|----------------|   
+|  Gateways Construídos			| Inteiro 		| 0		| 6   
+|  Cybernetics Core Construídos		| Inteiro 		| 0		| 1   
+|  Twilight Council Construídos 	| Inteiro 		| 0		| 1   
+|  Dark Shrine Council 			| Inteiro 		| 0		| 1   
+|Nexus Ativos 				| Inteiro 		| 1 		| 3   
+|Stalkers Pelotão de Ataque 		| Inteiro 		| 0 		| 30   
+|Dark Templars Pelotãao de Ataque 	| Inteiro 		| 0 		| 5   
+|Stalkers Pelotão de Defesa 		| Inteiro 		| 0 		| 15   
+|Dark Templars Pelotão de Defesa 	| Inteiro 		| 0 		| 2   
+|Pilows de proxy 			| lista com localização | 0 		| 5   
 
 
 ### Agente de Exploração
