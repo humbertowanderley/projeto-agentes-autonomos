@@ -69,9 +69,9 @@ A estratégia será implementada através de uma abordagem multi agentes. Cada u
 
 ### Agente de Exploração
 Encarregado de explorar o mapa com o objetivo de descobrir onde a base inimiga está o mais rápido possível.
--	Se o explorador dor atacado, ele deve tentar sobreviver fugindo, e depois continuar sua exploração.
+-	Se o explorador for atacado, ele deve tentar sobreviver fugindo, e depois continuar sua exploração.
 -	Se o explorador morrer, deve-se alocar outro, até a base inimiga ser descoberta.
--	Deve Construir e Manter os pylon de proxy prem locais randomicos próximo  a base inimiga quando o agente estrategista solicitar.
+-	Deve Construir e Manter os pylon de proxy em locais randomicos próximo  a base inimiga quando o agente estrategista solicitar.
 
 ### Agente Administrador de Recursos
 Encarregado de garantir uma coleta de recursos inteligente, não sobrecarregando os nexus com trabalhadores em exesso e expandindo sempre que possível para novas áreas. O ideal é limitar o número máximo de trabalhadores toal em até 40 para evitar afetar slots destinados a unidades de combate.
