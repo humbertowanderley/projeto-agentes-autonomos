@@ -146,7 +146,7 @@ O Relatório do projeto deve ser elaborado a medida que os agentes forem ficando
 
 - Qualquer parte da documentação inicial está sujeita a alteração.
 - A memória compartilhada pode ter mais ou menos informações, conforme vá havendo necessidade por parte dos agentes durante a implementação.
-- A pasta basic bot é apenas um esboço simples de um único agente do que deve ser a estratégia. Ele tem muitas limitações e alguns bugs, porém pode ajudar na implementação dos agentes e no entendimento da estratégia na prática.
+- A pasta **agente-exemplo da estrategia** é apenas um esboço simples de um único agente do que deve ser a estratégia. Ele tem muitas limitações e alguns bugs, porém pode ajudar na implementação dos agentes e no entendimento da estratégia na prática.
 - Cada agente deve ser criado em um arquivo separado dentro da pasta Agentes. Ao final será dado um import de todos os agentes no arquivo do agente principal para o instanciamento.
 
 **Deadline da implementação: 01/07/2018**
