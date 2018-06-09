@@ -74,7 +74,7 @@ Encarregado de explorar o mapa com o objetivo de descobrir onde a base inimiga e
 -	Deve Construir e Manter os pylon de proxy em locais randomicos próximo  a base inimiga quando o agente estrategista solicitar.
 
 ### Agente Administrador de Recursos
-Encarregado de garantir uma coleta de recursos inteligente, não sobrecarregando os nexus com trabalhadores em exesso e expandindo sempre que possível para novas áreas. O ideal é limitar o número máximo de trabalhadores toal em até 40 para evitar afetar slots destinados a unidades de combate.
+Encarregado de garantir uma coleta de recursos inteligente, não sobrecarregando os nexus com trabalhadores em exesso e expandindo sempre que possível para novas áreas. O ideal é limitar o número máximo de trabalhadores total em até 40 para evitar afetar slots destinados a unidades de combate.
 
 - Recursos a serem gerenciados:
 	* **Minerais:** Sempre que necessário, fazer **expansões**, garantindo o aumento de produção de minerais sem afetar a estratégia básica.
