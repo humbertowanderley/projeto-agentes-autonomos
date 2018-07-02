@@ -52,7 +52,7 @@ class ResourceAgent(sc2.BotAI):
 
 def main():
 	sc2.run_game(sc2.maps.get("Abyssal Reef LE"), [
-		Bot(Race.Protoss, MyBot()),
+		Bot(Race.Protoss, ResourceAgent()),
 		Computer(Race.Protoss, Difficulty.Hard)
 	], realtime=True)
 
