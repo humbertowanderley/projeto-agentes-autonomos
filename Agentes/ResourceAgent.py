@@ -6,6 +6,9 @@ from sc2.constants import *
 from sc2.player import Bot, Computer
 import time
 		
+#Representação da tabela de memória compartilhada
+memoria = [0, 0, 0, 0, 1, 0, 0, 0, 0, []]
+		
 class ResourceAgent(sc2.BotAI):
 	async def on_step(self, iteration):
 	
@@ -21,8 +24,11 @@ class ResourceAgent(sc2.BotAI):
 			#define o nexus principal
 			main_nexus = self.units(NEXUS).ready.first
 			#Faz expansão apartir de algum tempo e se o número total de nexus for menor que 2
-			if(iteration > 500 and self.units(NEXUS).amount < 2 and self.can_afford(NEXUS)):
+			if(iteration > 500 and memoria[4] < 2 and self.can_afford(NEXUS)):
 				await self.expand_now()
+				memoria[4] = memoria[4] + 1
+				s = 'A quantidade de nexus é ' + repr(memoria[4])
+				print(s)
 		
 		#Constroi um novo pylon próximo ao nexux principal sempre que a capacidade populacional estiver a beira de atingir o limite
 		if self.supply_left < 5 and not self.already_pending(PYLON):
@@ -53,8 +59,8 @@ class ResourceAgent(sc2.BotAI):
 def main():
 	sc2.run_game(sc2.maps.get("Abyssal Reef LE"), [
 		Bot(Race.Protoss, ResourceAgent()),
-		Computer(Race.Protoss, Difficulty.Hard)
-	], realtime=True)
+		Computer(Race.Protoss, Difficulty.Easy)
+	], realtime=False)
 
 if __name__ == '__main__':
 	main()
