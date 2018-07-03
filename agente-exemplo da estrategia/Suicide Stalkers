@@ -12,6 +12,8 @@ class MyBot(sc2.BotAI):
         self.proxy_built = False
         self.proxy1 = 0
         self.estado_passivo = 'construir'
+        self.construir_pylon = 0
+        self.expansao = 0
 
     async def on_step(self, iteration):
         #Reorganiza os workers nos slots de coleta de recursos
@@ -28,14 +30,28 @@ class MyBot(sc2.BotAI):
             #Faz expansão apartir de algum tempo e se o número total de nexus for menor que 2
             if self.estado_passivo == 'expandir' and self.can_afford(NEXUS) and not self.already_pending(NEXUS):
                 await self.expand_now()
+                self.expansao=self.expansao+1
                 self.estado_passivo = 'construir'
                 print ('construir')
 
+        if self.construir_pylon > 0:
+            self.construir_pylon = self.construir_pylon-1
+            if self.can_afford(PYLON):
+                await self.build(PYLON, near=main_nexus.position.towards(self.game_info.map_center, 3))
+            return
 
         #Constroi um novo pylon próximo ao nexux principal sempre que a capacidade populacional estiver a beira de atingir o limite
         if self.supply_left < 5 and not self.already_pending(PYLON):
-            if self.can_afford(PYLON):
-                await self.build(PYLON, near=main_nexus.position.towards(self.game_info.map_center, 3))
+            if self.units.amount > 150:
+               self.construir_pylon = 4
+               return
+            if self.units.amount > 100:
+               self.construir_pylon = 3
+               return
+            if self.units.amount > 50:
+               self.construir_pylon = 2
+               return
+            self.construir_pylon = 1
             return
 
         #Define o número máximo de workers baseado na quantidade de nexus disponíveis e um limiar de 40 workers
@@ -56,7 +72,7 @@ class MyBot(sc2.BotAI):
                 if not self.units(ASSIMILATOR).closer_than(1.0, vg).exists:
                     await self.do(worker.build(ASSIMILATOR, vg))
 
-                #Se existir algum pylon construído, constrói portal -> cyberneticscore -> + 1 + 2x portais aonde x é o número de nexus
+        #Se existir algum pylon construído, constrói portal -> cyberneticscore -> + 1 + 2x portais aonde x é o número de nexus
         if self.estado_passivo == 'construir':
                 if self.units(PYLON).ready.exists:
                         if  not self.units(GATEWAY).ready.exists and not self.units(WARPGATE).ready.exists:
@@ -65,7 +81,7 @@ class MyBot(sc2.BotAI):
                         elif not self.units(CYBERNETICSCORE).exists and not self.already_pending(CYBERNETICSCORE):
                                 if self.can_afford(CYBERNETICSCORE):
                                         await self.build(CYBERNETICSCORE, near=self.units(PYLON).ready.random)
-                        elif self.can_afford(GATEWAY) and (self.units(WARPGATE).amount + self.units(GATEWAY).amount) < (self.units(NEXUS).amount*2 + 2):
+                        elif self.can_afford(GATEWAY) and (self.minerals > 999 or (self.units(WARPGATE).amount + self.units(GATEWAY).amount) < (self.units(NEXUS).amount*2 + 2)):
                                 await self.build(GATEWAY, near=self.units(PYLON).ready.random)
                         else:
                                 self.estado_passivo = 'treinar'
@@ -75,18 +91,24 @@ class MyBot(sc2.BotAI):
                 for gateway in self.units(GATEWAY).ready:
                         if self.can_afford(STALKER) and gateway.noqueue and self.units(CYBERNETICSCORE).ready and self.supply_left > 1:
                                 await self.do(gateway.train(STALKER))
-                if iteration > 500*(self.units(NEXUS).amount):
-                        self.estado_passivo = 'expandir'
-                        print ('expandir')
+                if iteration > 500*(self.units(NEXUS).amount) and self.expansao < 3:
+                    self.estado_passivo = 'expandir'
+                    print ('expandir')
+                    return
+                elif self.minerals > 999:
+                    self.estado_passivo = 'construir'
+                    print ('construir')
+                    return
 
-        for stalker in (self.units(STALKER).idle):
-                await self.do(stalker.attack(self.enemy_start_locations[0]))
+        if self.known_enemy_units.amount > 0:
+            for stalker in (self.units(STALKER).idle):
+                    await self.do(stalker.attack(self.enemy_start_locations[0]))
 
 
 def main():
     sc2.run_game(sc2.maps.get("Abyssal Reef LE"), [
         Bot(Race.Protoss, MyBot()),
-        Computer(Race.Terran, Difficulty.Easy)
+        Computer(Race.Terran, Difficulty.Hard)
     ], realtime=False)
 
 if __name__ == '__main__':
