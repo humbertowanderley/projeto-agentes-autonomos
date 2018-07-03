@@ -100,10 +100,8 @@ class MyBot(sc2.BotAI):
                     print ('construir')
                     return
 
-        if self.known_enemy_units.amount > 0:
-            for stalker in (self.units(STALKER).idle):
-                    await self.do(stalker.attack(self.enemy_start_locations[0]))
-
+        for stalker in (self.units(STALKER).idle):
+                await self.do(stalker.attack(self.enemy_start_locations[0]))
 
 def main():
     sc2.run_game(sc2.maps.get("Abyssal Reef LE"), [
