@@ -131,13 +131,34 @@ class MyBot(sc2.BotAI):
 
                 # Comecar a treinar os soldados na base da gente
                 if self.proxy_destroyed:
+
                         for gateway in self.units(GATEWAY).ready:
-                                if self.can_afford(DARKTEMPLAR) and self.units(DARKTEMPLAR).amount < 10:
+                                if self.can_afford(DARKTEMPLAR) and self.units(DARKTEMPLAR).amount < 10 and self.units(CYBERNETICSCORE).ready and gateway.noqueue:
                                         await self.do(gateway.train(DARKTEMPLAR))
-                        
+
+                        for gateway in self.units(GATEWAY).ready:
+                                if self.can_afford(STALKER) and self.units(STALKER).amount < 10 and self.units(CYBERNETICSCORE).ready and gateway.noqueue:
+                                        await self.do(gateway.train(STALKER))
+
+                                                
                         for warpgate in self.units(WARPGATE).ready:
-                                if self.can_afford(DARKTEMPLAR) and self.units(DARKTEMPLAR).amount < 10:
-                                        await self.do(gateway.train(DARKTEMPLAR))
+                                abilities = await self.get_available_abilities(warpgate)
+                                if AbilityId.WARPGATETRAIN_DARKTEMPLAR in abilities:
+                                        if self.can_afford(DARKTEMPLAR):
+                                                main_nexus = self.units(NEXUS).ready.first
+                                                main_nexus = main_nexus.position.towards(self.game_info.map_center, 7)
+                                                placement = await self.find_placement(AbilityId.WARPGATETRAIN_STALKER, main_nexus.random_on_distance(5), placement_step=5)
+                                                if placement is not None:
+                                                        if self.can_afford(DARKTEMPLAR) and self.units(DARKTEMPLAR).amount < 10 and warpgate.noqueue:
+                                                                await self.do(warpgate.warp_in(DARKTEMPLAR, placement))
+                        
+
+
+                        if self.units(DARKTEMPLAR).amount > 2 and self.units(STALKER).amount > 4:
+                                for templar in self.units(DARKTEMPLAR).ready.idle:
+                                        await self.do(templar.attack(self.enemy_start_locations[0]))
+                                for stalker in self.units(STALKER).ready.idle:
+                                        await self.do(stalker.attack(self.enemy_start_locations[0]))
 
                 # Defesa
                 if self.known_enemy_units.amount > 0:
@@ -146,7 +167,7 @@ class MyBot(sc2.BotAI):
 def main():
         sc2.run_game(sc2.maps.get("AcidPlantLE"), [
                 Bot(Race.Protoss, MyBot()),
-                Computer(Race.Protoss, Difficulty.Easy)
+                Computer(Race.Protoss, Difficulty.Hard)
         ], realtime=False)
 
 if __name__ == '__main__':
