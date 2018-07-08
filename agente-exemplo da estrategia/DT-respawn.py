@@ -10,7 +10,9 @@ class MyBot(sc2.BotAI):
         def __init__(self):
                 self.warpgate_started = False
                 self.proxy_built = False
+                self.proxy_destroyed = False
                 self.proxy1 = 0
+                
 
         async def on_step(self, iteration):
                 
@@ -93,6 +95,7 @@ class MyBot(sc2.BotAI):
                                         if self.can_afford(PYLON):
                                                 await self.build(PYLON, near=self.proxy1)
                                                 self.proxy_built = True
+                                                self.proxy_destroyed = False
 
                 #Transforma todos os gateway em warpgateways assim que a tecnologia esteja disponível. enquanto não está, cria stalkers para defesa da base principal
                 for gateway in self.units(GATEWAY).ready:
@@ -115,13 +118,9 @@ class MyBot(sc2.BotAI):
                                         #Se o pylon de proxy for destruído, é um problema.
                                         if placement is not None:
                                                 await self.do(warpgate.warp_in(DARKTEMPLAR, placement))
-                                                #       maketemplar = False
-                                                # else:
-                                                #       await self.do(warpgate.warp_in(STALKER, placement))
-                                                #       maketemplar = True
-
                                         else:
                                             self.proxy_built = False
+                                            self.proxy_destroyed = True
                                         
                         #Sempre que ter um templar de bobeira, manda ele atacar a base inimiga
                         if self.units(DARKTEMPLAR).amount > 0 and self.units(STALKER).amount > 8:
@@ -130,12 +129,22 @@ class MyBot(sc2.BotAI):
                                 for stalker in self.units(STALKER).ready.idle:
                                         await self.do(stalker.attack(self.enemy_start_locations[0]))
 
-                #esboço de defesa
+                # Comecar a treinar os soldados na base da gente
+                if self.proxy_destroyed:
+                        for gateway in self.units(GATEWAY).ready:
+                                if self.can_afford(DARKTEMPLAR) and self.units(DARKTEMPLAR).amount < 10:
+                                        await self.do(gateway.train(DARKTEMPLAR))
+                        
+                        for warpgate in self.units(WARPGATE).ready:
+                                if self.can_afford(DARKTEMPLAR) and self.units(DARKTEMPLAR).amount < 10:
+                                        await self.do(gateway.train(DARKTEMPLAR))
+
+                # Defesa
                 if self.known_enemy_units.amount > 0:
                     for stalker in self.units(STALKER).idle:
                         await self.do(stalker.attack(self.known_enemy_units[0]))
 def main():
-        sc2.run_game(sc2.maps.get("Abyssal Reef LE"), [
+        sc2.run_game(sc2.maps.get("AcidPlantLE"), [
                 Bot(Race.Protoss, MyBot()),
                 Computer(Race.Protoss, Difficulty.Easy)
         ], realtime=False)
