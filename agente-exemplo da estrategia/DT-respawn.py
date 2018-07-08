@@ -11,9 +11,9 @@ class MyBot(sc2.BotAI):
                 self.warpgate_started = False
                 self.proxy_built = False
                 self.proxy_destroyed = False
+                self.ataque = False
                 self.proxy1 = 0
                 
-
         async def on_step(self, iteration):
                 
                 #Reorganiza os workers nos slots de coleta de recursos
@@ -118,15 +118,16 @@ class MyBot(sc2.BotAI):
                                         #Se o pylon de proxy for destruído, é um problema.
                                         if placement is not None:
                                                 await self.do(warpgate.warp_in(DARKTEMPLAR, placement))
+                                                self.ataque = True
                                         else:
                                             self.proxy_built = False
                                             self.proxy_destroyed = True
                                         
                         #Sempre que ter um templar de bobeira, manda ele atacar a base inimiga
-                        if self.units(DARKTEMPLAR).amount > 0 and self.units(STALKER).amount > 8:
-                                for templar in self.units(DARKTEMPLAR).ready.idle:
+                        if self.units(DARKTEMPLAR).amount > 2:
+                                for templar in self.units(DARKTEMPLAR).ready:
                                         await self.do(templar.attack(self.enemy_start_locations[0]))
-                                for stalker in self.units(STALKER).ready.idle:
+                                for stalker in self.units(STALKER).ready:
                                         await self.do(stalker.attack(self.enemy_start_locations[0]))
 
                 # Comecar a treinar os soldados na base da gente
@@ -145,30 +146,37 @@ class MyBot(sc2.BotAI):
                                 abilities = await self.get_available_abilities(warpgate)
                                 if AbilityId.WARPGATETRAIN_DARKTEMPLAR in abilities:
                                         if self.can_afford(DARKTEMPLAR):
-                                                main_nexus = self.units(NEXUS).ready.first
-                                                main_nexus = main_nexus.position.towards(self.game_info.map_center, 7)
-                                                placement = await self.find_placement(AbilityId.WARPGATETRAIN_STALKER, main_nexus.random_on_distance(5), placement_step=5)
+                                                placement = await self.find_placement(AbilityId.WARPGATETRAIN_STALKER, self.units(PYLON).random.position.random_on_distance(5), placement_step=5)
                                                 if placement is not None:
                                                         if self.can_afford(DARKTEMPLAR) and self.units(DARKTEMPLAR).amount < 10 and warpgate.noqueue:
                                                                 await self.do(warpgate.warp_in(DARKTEMPLAR, placement))
-                        
+                                                                self.ataque = True
 
-
-                        if self.units(DARKTEMPLAR).amount > 2 and self.units(STALKER).amount > 4:
-                                for templar in self.units(DARKTEMPLAR).ready.idle:
+                        if self.units(DARKTEMPLAR).amount > 2:
+                                for templar in self.units(DARKTEMPLAR).ready:
                                         await self.do(templar.attack(self.enemy_start_locations[0]))
-                                for stalker in self.units(STALKER).ready.idle:
+                                for stalker in self.units(STALKER).ready:
                                         await self.do(stalker.attack(self.enemy_start_locations[0]))
 
                 # Defesa
-                if self.known_enemy_units.amount > 0:
+                if self.known_enemy_units.amount > 0 and not self.ataque:
                     for stalker in self.units(STALKER).idle:
                         await self.do(stalker.attack(self.known_enemy_units[0]))
+                elif not self.ataque:
+                    for stalker in self.units(STALKER).idle:
+                        await self.do(stalker.move(self.units(NEXUS).first))
+                else:
+                        for templar in self.units(DARKTEMPLAR).ready:
+                                await self.do(templar.attack(self.enemy_start_locations[0]))
+                        for stalker in self.units(STALKER).ready:
+                                await self.do(stalker.attack(self.enemy_start_locations[0]))
+
+                                
 def main():
-        sc2.run_game(sc2.maps.get("AcidPlantLE"), [
+        sc2.run_game(sc2.maps.get("Abyssal Reef LE"), [
                 Bot(Race.Protoss, MyBot()),
                 Computer(Race.Protoss, Difficulty.Hard)
         ], realtime=False)
 
 if __name__ == '__main__':
-    main()
+        main()
