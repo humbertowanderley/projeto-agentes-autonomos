@@ -15,7 +15,6 @@ class ExplorationAgent(sc2.BotAI):
         
         self.pylonList = []
         self.enemy_location = None
-        self.start = False
         self.explorer_list = []
 
 
@@ -115,7 +114,7 @@ class ExplorationAgent(sc2.BotAI):
 
 
 def main():
-    sc2.run_game(maps.get("BelShirVestigeLE"), [
+    sc2.run_game(maps.get("Abyssal Reef LE"), [
         Bot(Race.Protoss, ExplorationAgent()),
         Computer(Race.Protoss, Difficulty.Easy)
     ], realtime=False)
