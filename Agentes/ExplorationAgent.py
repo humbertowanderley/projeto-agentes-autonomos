@@ -15,22 +15,29 @@ class ExplorationAgent(sc2.BotAI):
         
         self.pylonList = []
         self.enemy_location = None
-        self.explorer = None
+        self.start = False
+        self.explorer_list = []
+
 
     async def on_step(self, iteration):
         
+        if iteration is 0:
+            for _ in range(len(self.enemy_start_locations)):
+                self.explorer_list.append(None)
+            
+            # Procura onde o inimigo nasceu
+            await self.find_enemy_start_locations()
+
+
         # Açao do BotAI que distribui os workers nos minerios e gases em relacao ao nexus mais proximo
         await self.distribute_workers()
         # Metodo para construir mais workers
         await self.build_workers()
-       
-       
-        # Verifica onde o inimigo nasceu
-        await self.find_enemy_start_locations()
-        
+
+        # Retorna a posicao do inimigo
         if self.enemy_location is None:
             self.enemy_location = await self.enemy_start_location()
-        
+
 
     async def build_workers(self):
         for nexus in self.units(NEXUS).ready.noqueue:
@@ -56,13 +63,11 @@ class ExplorationAgent(sc2.BotAI):
         '''
 			Procura onde é local de nascimento do inimigo
 		'''
-        if self.explorer is None:
-		    #seleciona um trabalhador
-            self.explorer = self.units(PROBE).first
-        
-		#para cada possivel localizacao da base inimiga manda o trabalhador para lá
-        for location in self.enemy_start_locations:
-            await self.do(self.explorer.move(location))
+        for i in range(len(self.enemy_start_locations)):
+            explorer = self.units(PROBE).first
+            location = self.enemy_start_locations[i]
+            self.explorer_list[i] = explorer
+            await self.do(explorer.move(location))
 
 
     async def select_random_enemy_structure(self):
@@ -95,16 +100,22 @@ class ExplorationAgent(sc2.BotAI):
         
             for i in range(len(self.enemy_start_locations)):
                 location = self.enemy_start_locations[i]
-                dist = sqrt( (location.x - position.x)**2 + (location.y - position.y)**2 )
+                dist = self.distance(location, position)
                 if dist < min :
                     min = dist
                     index = i
             
+            # Deixa o agente que descobriu a localização no local
+            self.explorer_list[index].hold_position()
             return self.enemy_start_locations[index]
 
 
+    def distance(self, position1, position2):
+        return sqrt( (position1.x - position2.x)**2 + (position1.y - position2.y)**2 )
+
+
 def main():
-    sc2.run_game(maps.get("Abyssal Reef LE"), [
+    sc2.run_game(maps.get("BelShirVestigeLE"), [
         Bot(Race.Protoss, ExplorationAgent()),
         Computer(Race.Protoss, Difficulty.Easy)
     ], realtime=False)
