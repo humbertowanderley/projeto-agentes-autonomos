@@ -1,64 +1,144 @@
+import random
+
 import sc2
-from sc2 import run_game, maps, Race, Difficulty
+from sc2 import Race, Difficulty
+from sc2.constants import *
 from sc2.player import Bot, Computer
-from sc2.constants import NEXUS, PROBE, PYLON, ASSIMILATOR
+import time
 
-class SentdeBot(sc2.BotAI):
-    async def on_step(self, iteration):
-        
-        # Açao do BotAI que distribui os workers nos minerios e gases em relacao ao nexus mais proximo
-        await self.distribute_workers()
-        # Metodo para construir mais workers
-        await self.build_workers()
-        # Metodo para construir pylons
-        await self.build_pylons()
-        # Metodo para construir assimilators (coletar gas)
-        await self.build_assimilators()
-        # Expandir a base
-        await self.expand()
+class MyBot(sc2.BotAI):
+        def __init__(self):
+                self.warpgate_started = False
+                self.proxy_built = False
+                self.proxy1 = 0
 
-    async def build_workers(self):
-        for nexus in self.units(NEXUS).ready.noqueue:
-            if self.can_afford(PROBE):
-                await self.do(nexus.train(PROBE))
+        async def on_step(self, iteration):
+                
+                #Reorganiza os workers nos slots de coleta de recursos
+                await self.distribute_workers()
 
-    async def build_pylons(self):
-        if self.supply_left < 5 and not self.already_pending (PYLON):
-            nexuses = self.units(NEXUS).ready
-            if nexuses.exists:
-                if self.can_afford(PYLON):
-                    await self.build(PYLON, near=nexuses.first)
+                #Se não existe nenhum nexus, faz todos os workers atacarem a base inimiga
+                if not self.units(NEXUS).ready.exists:
+                        for worker in self.workers:
+                                await self.do(worker.attack(self.enemy_start_locations[0]))
+                        return
+                else:
+                        #define o nexus principal
+                        main_nexus = self.units(NEXUS).ready.first
+                        #Faz expansão apartir de algum tempo e se o número total de nexus for menor que 2
+                        if(iteration > 400 and self.units(NEXUS).amount < 2 and self.can_afford(NEXUS)):
+                                await self.expand_now()
+                
+                #Constroi um novo pylon próximo ao nexux principal sempre que a capacidade populacional estiver a beira de atingir o limite
+                if self.supply_left < 5 and not self.already_pending(PYLON):
+                        if self.can_afford(PYLON):
+                                await self.build(PYLON, near=main_nexus.position.towards(self.game_info.map_center, 7))
+                        return
 
-    async def build_assimilators(self):
-        for nexus in self.units(NEXUS).ready:
-            # Existe algum gás a 15m de distancia do nexus?
-            vaspenes = self.state.vespene_geyser.closer_than(15.0, nexus)
-            for vaspene in vaspenes:
-                if not self.can_afford(ASSIMILATOR):
-                    break
-                # Pega um trabalhador proximo ao gás    
-                worker = self.select_build_worker(vaspene.position)
-                # Se nao existir trabalhador perto desse gás
-                if worker is None:
-                    break
-                # O gas ja tem um assimilator?
-                if not self.units(ASSIMILATOR).closer_than(1.0, vaspene).exists:
-                    await self.do(worker.build(ASSIMILATOR, vaspene))
-    
-    async def expand(self):
-        # Se tem menos de 3 unidades agrupadas no meu nexus
-        if self.units(NEXUS).amount < 3 and self.can_afford(NEXUS):
-            # Acao do BotAI para expandir a base
-            await self.expand_now()
-            await self.testAcoes()
+                #Define o número máximo de workers baseado na quantidade de nexus disponíveis e um limiar de 40 workers
+                if (self.workers.amount < self.units(NEXUS).amount*20 and self.workers.amount < 40) and main_nexus.noqueue and self.supply_left > 0:
+                        if self.can_afford(PROBE):
+                                await self.do(main_nexus.train(PROBE))
+                        return
 
-    
-    async def testAcoes(self):
-        for worker in self.units(PROBE):
-            await self.do(worker.stop())
+                #Define a construção de Assimiladores nos vespene geysers próximos a cada nexus existente
+                for nexus in self.units(NEXUS).ready:
+                        vespene_geysers = self.state.vespene_geyser.closer_than(13.0, nexus)
+                        for vg in vespene_geysers:
+                                if not self.can_afford(ASSIMILATOR):
+                                        break
 
+                                worker = self.select_build_worker(vg.position)
+                                if worker is None:
+                                        break
 
-run_game(maps.get("AcidPlantLE"), [
-    Bot(Race.Protoss, SentdeBot()),
-    Computer(Race.Terran, Difficulty.Easy)
-    ], realtime=True)
+                                if not self.units(ASSIMILATOR).closer_than(1.0, vg).exists:
+                                        await self.do(worker.build(ASSIMILATOR, vg))
+
+                #Se existir algum pylon construído, constrói portal -> cyberneticscore -> + 2 portais próximos a um pylon random
+                if self.units(PYLON).ready.exists:
+                        if  not self.units(GATEWAY).ready.exists and not self.units(WARPGATE).ready.exists:
+                                if self.can_afford(GATEWAY) and not self.already_pending(GATEWAY):
+                                        await self.build(GATEWAY, near=self.units(PYLON).ready.random)
+                        elif not self.units(CYBERNETICSCORE).exists and not self.already_pending(CYBERNETICSCORE):
+                                if self.can_afford(CYBERNETICSCORE):
+                                        await self.build(CYBERNETICSCORE, near=self.units(PYLON).ready.random)
+                        #elif not self.units(FORGE).exists and not self.already_pending(FORGE):
+                        #       if self.can_afford(FORGE):
+                        #               await self.build(FORGE, near=self.units(PYLON).ready.random)
+                        elif self.can_afford(GATEWAY) and (self.units(WARPGATE).amount + self.units(GATEWAY).amount) < 5:
+                                await self.build(GATEWAY, near=self.units(PYLON).ready.random)
+
+                #Se o cybernetic core estiver construído e ter recuros, inicia a pesquisa de warpgate
+                if self.units(CYBERNETICSCORE).ready.exists and self.can_afford(RESEARCH_WARPGATE) and not self.warpgate_started:
+                        ccore = self.units(CYBERNETICSCORE).ready.random
+                        await self.do(ccore(RESEARCH_WARPGATE))
+                        self.warpgate_started = True
+
+                #if self.units(FORGE).exists:
+                    
+
+                #Se a pesquisa de wargate for iniciada, constrói twilightconcil -> darkshrine -> pylon de proxy 
+                if(self.warpgate_started == True):
+
+                        if  not self.units(TWILIGHTCOUNCIL).ready.exists:
+                                if self.can_afford(TWILIGHTCOUNCIL) and not self.already_pending(TWILIGHTCOUNCIL):
+                                        await self.build(TWILIGHTCOUNCIL, near=self.units(PYLON).ready.random)
+                        elif  not self.units(DARKSHRINE).ready.exists:
+                                if self.can_afford(DARKSHRINE) and not self.already_pending(DARKSHRINE):
+                                        await self.build(DARKSHRINE, near=self.units(PYLON).random)
+                                        
+                                if self.units(DARKSHRINE).amount >= 1 and not self.proxy_built:
+                                        self.proxy1 = self.game_info.map_center.towards(self.enemy_start_locations[0], random.randrange(15, 30))
+                                        if self.can_afford(PYLON):
+                                                await self.build(PYLON, near=self.proxy1)
+                                                self.proxy_built = True
+
+                #Transforma todos os gateway em warpgateways assim que a tecnologia esteja disponível. enquanto não está, cria stalkers para defesa da base principal
+                for gateway in self.units(GATEWAY).ready:
+                        abilities = await self.get_available_abilities(gateway)
+                        if AbilityId.MORPH_WARPGATE in abilities and self.can_afford(AbilityId.MORPH_WARPGATE):
+                                if self.units(WARPGATE).amount < 2:
+                                        await self.do(gateway(MORPH_WARPGATE))
+                        if self.can_afford(STALKER) and self.units(STALKER).amount < 10 and self.units(CYBERNETICSCORE).ready and gateway.noqueue:
+                                await self.do(gateway.train(STALKER))
+
+                #Se o pylon de proxy está construído, transdobra darktemplar para eles assim que a unidade estiver disponível
+                if self.proxy_built:
+                        for warpgate in self.units(WARPGATE).ready:
+                                
+                                abilities = await self.get_available_abilities(warpgate)
+                                if AbilityId.WARPGATETRAIN_DARKTEMPLAR in abilities:
+                                        #Define local de transdobra próximo ao pylon de proxy
+                                    if self.can_afford(DARKTEMPLAR):
+                                        placement = await self.find_placement(AbilityId.WARPGATETRAIN_STALKER, self.proxy1.random_on_distance(5), placement_step=5)
+                                        #Se o pylon de proxy for destruído, é um problema.
+                                        if placement is not None:
+                                                await self.do(warpgate.warp_in(DARKTEMPLAR, placement))
+                                                #       maketemplar = False
+                                                # else:
+                                                #       await self.do(warpgate.warp_in(STALKER, placement))
+                                                #       maketemplar = True
+
+                                        else:
+                                            self.proxy_built = False
+                                        
+                        #Sempre que ter um templar de bobeira, manda ele atacar a base inimiga
+                        if self.units(DARKTEMPLAR).amount > 0 and self.units(STALKER).amount > 8:
+                                for templar in self.units(DARKTEMPLAR).ready.idle:
+                                        await self.do(templar.attack(self.enemy_start_locations[0]))
+                                for stalker in self.units(STALKER).ready.idle:
+                                        await self.do(stalker.attack(self.enemy_start_locations[0]))
+
+                #esboço de defesa
+                if self.known_enemy_units.amount > 0:
+                    for stalker in self.units(STALKER).idle:
+                        await self.do(stalker.attack(self.known_enemy_units[0]))
+def main():
+        sc2.run_game(sc2.maps.get("Abyssal Reef LE"), [
+                Bot(Race.Protoss, MyBot()),
+                Computer(Race.Protoss, Difficulty.Easy)
+        ], realtime=False)
+
+if __name__ == '__main__':
+    main()
