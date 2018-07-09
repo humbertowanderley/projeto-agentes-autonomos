@@ -213,7 +213,7 @@ class MainAgent(sc2.BotAI):
             task.cancel()
 
 def main():
-    sc2.run_game(sc2.maps.get("PaladinoTerminalLE"), [
+    sc2.run_game(sc2.maps.get("Abyssal Reef LE"), [
         Bot(Race.Protoss, MainAgent()),
         Computer(Race.Protoss, Difficulty.Hard)
     ], realtime=False)
